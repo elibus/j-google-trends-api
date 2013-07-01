@@ -60,29 +60,35 @@ public class App {
 
     HttpClient client = new DefaultHttpClient();
     URIBuilder builder = new URIBuilder();
-    builder.setScheme("https").setHost("www.google.com").setPath("/accounts/ClientLogin");
+    builder.setScheme("https").setHost("accounts.google.com").setPath("/ServiceLoginAuth");
     URI uri = builder.build();
 
     HttpPost httpPost = new HttpPost(uri);
     List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-    nvps.add(new BasicNameValuePair("Email", "elibus@gmail.com"));
-    nvps.add(new BasicNameValuePair("Passwd", "4seJ_mpmLfi5aFcBi_JB_4qyz"));
+    nvps.add(new BasicNameValuePair("Email", "xxxxxx@gmail.com"));
+    nvps.add(new BasicNameValuePair("Passwd", "xxxxyyyyzzzz"));
     nvps.add(new BasicNameValuePair("source", "gtrends-api"));
     nvps.add(new BasicNameValuePair("accountType", "GOOGLE"));
     nvps.add(new BasicNameValuePair("service", "trends"));
 
     httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+    httpPost.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
+    httpPost.addHeader("Accept","text/plain");
     HttpResponse response = client.execute(httpPost);
     System.out.println(response.getStatusLine());
     System.out.println("Initial set of cookies:");
-        List<Cookie> cookies = cookieStore.getCookies();
-        if (cookies.isEmpty()) {
-            System.out.println("None");
-        } else {
-            for (int i = 0; i < cookies.size(); i++) {
-                System.out.println("- " + cookies.get(i).toString());
-            }
+    List<Cookie> cookies = cookieStore.getCookies();
+    if (cookies.isEmpty()) {
+        System.out.println("None");
+    } else {
+        for (int i = 0; i < cookies.size(); i++) {
+            System.out.println("- " + cookies.get(i).toString());
         }
+    }
+
+    String content = toString(response.getEntity().getContent());
+    String[] split = content.split("<input type=\"hidden\" name=\"GALX\" value=\"");
+    System.out.println("A: " + split[0]);
 
 //    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 //    urlConnection.setRequestMethod("POST");
@@ -112,7 +118,8 @@ public class App {
 //      inputStream = urlConnection.getErrorStream();
 //    }
 
-    String postOutput = toString(response.getEntity().getContent());
+    //String postOutput = toString(response.getEntity().getContent());
+    String postOutput = null;
     StringTokenizer tokenizer = new StringTokenizer(postOutput, "=\n ");
     String token = null;
 
