@@ -4,15 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
@@ -22,7 +17,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -63,32 +57,49 @@ public class App {
     builder.setScheme("https").setHost("accounts.google.com").setPath("/ServiceLoginAuth");
     URI uri = builder.build();
 
+    HttpGet get = new HttpGet(uri);
+    get.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
+    get.addHeader("Accept","text/plain");
+    HttpResponse response = client.execute(get);
+    //System.out.println(response.getStatusLine());
+
+    String content = toString(response.getEntity().getContent());
+    String[] split = content.split("<input type=\"hidden\"[ \n\t]*name=\"GALX\"[ \n\t]*value=\"");
+    String galx = split[1].split("\"")[0];
+    //System.out.println(galx);
+
+//    get = new HttpGet("https://www.google.com/accounts/CheckCookie?chtml=LoginDoneHtml");
+//    get.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
+//    get.addHeader("Accept","text/plain");
+//    get.addHeader("Referrer", "https://www.google.com/accounts/ServiceLoginBoxAuth");
+//    response = client.execute(get);
+//    System.out.println(toString(response.getEntity().getContent()));
+
+
+
     HttpPost httpPost = new HttpPost(uri);
     List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-    nvps.add(new BasicNameValuePair("Email", "xxxxxx@gmail.com"));
-    nvps.add(new BasicNameValuePair("Passwd", "xxxxyyyyzzzz"));
+    nvps.add(new BasicNameValuePair("Email", "*******"));
+    nvps.add(new BasicNameValuePair("Passwd", "******"));
     nvps.add(new BasicNameValuePair("source", "gtrends-api"));
-    nvps.add(new BasicNameValuePair("accountType", "GOOGLE"));
-    nvps.add(new BasicNameValuePair("service", "trends"));
+    //nvps.add(new BasicNameValuePair("accountType", "GOOGLE"));
+    //nvps.add(new BasicNameValuePair("service", "trends"));
+    nvps.add(new BasicNameValuePair("PersistentCookie", "yes"));
+    //nvps.add(new BasicNameValuePair("continue", "http://www.google.com/trends/"));
+    nvps.add(new BasicNameValuePair("GALX", galx));
 
     httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
     httpPost.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
     httpPost.addHeader("Accept","text/plain");
-    HttpResponse response = client.execute(httpPost);
+    response = client.execute(httpPost);
     System.out.println(response.getStatusLine());
-    System.out.println("Initial set of cookies:");
-    List<Cookie> cookies = cookieStore.getCookies();
-    if (cookies.isEmpty()) {
-        System.out.println("None");
-    } else {
-        for (int i = 0; i < cookies.size(); i++) {
-            System.out.println("- " + cookies.get(i).toString());
-        }
-    }
 
-    String content = toString(response.getEntity().getContent());
-    String[] split = content.split("<input type=\"hidden\" name=\"GALX\" value=\"");
-    System.out.println("A: " + split[0]);
+    get = new HttpGet("http://www.google.com");
+    get.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
+    get.addHeader("Accept","text/plain");
+    get.addHeader("Referrer", "https://www.google.com/accounts/ServiceLoginBoxAuth");
+    response = client.execute(get);
+    System.out.println(toString(response.getEntity().getContent()));
 
 //    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 //    urlConnection.setRequestMethod("POST");
@@ -119,22 +130,22 @@ public class App {
 //    }
 
     //String postOutput = toString(response.getEntity().getContent());
-    String postOutput = null;
-    StringTokenizer tokenizer = new StringTokenizer(postOutput, "=\n ");
-    String token = null;
-
-    while (tokenizer.hasMoreElements()) {
-      if (tokenizer.nextToken().equals("Auth")) {
-        if (tokenizer.hasMoreElements()) {
-          token = tokenizer.nextToken();
-        }
-        break;
-      }
-    }
-    if (token == null) {
-      System.out.println("Authentication error. Response from server:\n" + postOutput);
-      System.exit(1);
-    }
+//    String postOutput = null;
+//    StringTokenizer tokenizer = new StringTokenizer(postOutput, "=\n ");
+//    String token = null;
+//
+//    while (tokenizer.hasMoreElements()) {
+//      if (tokenizer.nextToken().equals("Auth")) {
+//        if (tokenizer.hasMoreElements()) {
+//          token = tokenizer.nextToken();
+//        }
+//        break;
+//      }
+//    }
+//    if (token == null) {
+//      System.out.println("Authentication error. Response from server:\n" + postOutput);
+//      System.exit(1);
+//    }
 //
 //    HttpURLConnection connection = (HttpURLConnection) (new URL("http://www.google.com/trends/trendsReport?hl=en-US&q=jobs%20-%22steve%20jobs%22&cmpt=q&content=1&export=1")).openConnection();
 //
@@ -144,10 +155,15 @@ public class App {
 //    connection.setRequestMethod("GET");
     //connection.setRequestProperty("Content-Type", "application/atom+xml");
     //connection.setRequestProperty("Authorization", "GoogleLogin auth=" + token);
+    //HttpGet method = new HttpGet("http://www.google.com/trends/viz?hl=en-US&q=jobs%20-%22steve%20jobs%22&cmpt=q&content=1&export=1");
     HttpGet method = new HttpGet("http://www.google.com/trends/trendsReport?hl=en-US&q=jobs%20-%22steve%20jobs%22&cmpt=q&content=1&export=1");
-    method.addHeader("Authorization", "GoogleLogin auth=" + token);
+    //method.addHeader("Authorization", "GoogleLogin auth=" + token);
+    //method.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+    method.addHeader("Referrer", "https://www.google.com/accounts/ServiceLoginBoxAuth");
+    method.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21");
+    method.addHeader("Accept","text/plain");
 
-    response = client.execute(method, localContext);
+    response = client.execute(method);
 
     BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
     String line = "";
