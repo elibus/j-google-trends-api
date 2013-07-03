@@ -1,4 +1,4 @@
-package org.freaknet.gtrends.api.gtrendsapi;
+package org.freaknet.gtrends.api;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
