@@ -10,11 +10,11 @@ Example
     import org.apache.http.auth.NTCredentials;
     import org.apache.http.conn.params.ConnRoutePNames;
     import org.apache.http.impl.client.DefaultHttpClient;
-    import org.freaknet.gtrends.api.gtrendsapi.GoogleAuthenticator;
-    import org.freaknet.gtrends.api.gtrendsapi.GoogleTrendsClient;
-    import org.freaknet.gtrends.api.gtrendsapi.GoogleTrendsCsvParser;
-    import org.freaknet.gtrends.api.gtrendsapi.GoogleTrendsRequest;
-    import org.freaknet.gtrends.api.gtrendsapi.exceptions.GoogleTrendsClientException;
+    import org.freaknet.gtrends.api.GoogleAuthenticator;
+    import org.freaknet.gtrends.api.GoogleTrendsClient;
+    import org.freaknet.gtrends.api.GoogleTrendsCsvParser;
+    import org.freaknet.gtrends.api.GoogleTrendsRequest;
+    import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
     
     public class App {
     
