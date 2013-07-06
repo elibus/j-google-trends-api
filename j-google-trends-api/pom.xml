@@ -4,7 +4,7 @@
 
   <groupId>org.freaknet.gtrends</groupId>
   <artifactId>j-google-trends-api</artifactId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>j-google-trends-api</name>
@@ -32,9 +32,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://git@github.com/elibus/j-google-trends-api.git</connection>
+    <connection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</connection>
     <url>https://github.com/elibus/j-google-trends-api.git</url>
-    <developerConnection>scm:git:https://git@github.com/elibus/j-google-trends-api.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</developerConnection>
   </scm>
 
   <build>
@@ -42,7 +42,7 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh-external</artifactId>
-        <version>1.0</version>
+        <version>2.4</version>
       </extension>
     </extensions>
 
@@ -138,13 +138,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.4.1</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-scm-plugin</artifactId>
-            <version>1.8.1</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
 
