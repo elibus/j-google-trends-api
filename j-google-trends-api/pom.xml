@@ -38,6 +38,14 @@
   </scm>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>1.0</version>
+      </extension>
+    </extensions>
+
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -131,6 +139,7 @@
         <artifactId>maven-release-plugin</artifactId>
       </plugin>
     </plugins>
+
     <finalName>${project.artifactId}-${project.version}</finalName>
   </build>
 
