@@ -32,9 +32,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://git@github.com/elibus/Google-Trends-API.git</connection>
-    <url>https://github.com/elibus/Google-Trends-API.git</url>
-    <developerConnection>scm:git:https://git@github.com/elibus/Google-Trends-API.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</connection>
+    <url>https://git@github.com/elibus/j-google-trends-api.git</url>
+    <developerConnection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</developerConnection>
   </scm>
 
   <build>
