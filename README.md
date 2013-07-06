@@ -8,6 +8,10 @@ Google does not provide API for its Trends services, this an unofficial Java imp
 - Easily queries Trends services by only configuring request parameters
 - Supports Proxy configuration
 
+Download binaries
+=================
+https://github.com/elibus/j-google-trends-api/tree/master/releases/org/freaknet/gtrends/j-google-trends-api
+
 Example
 =======
     import org.apache.http.HttpHost;
