@@ -36,4 +36,11 @@
                 <exec.executable>${profiler.java}</exec.executable>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-release:prepare</actionName>
+            <displayName>release:prepare</displayName>
+            <goals>
+                <goal>release:prepare</goal>
+            </goals>
+        </action>
     </actions>
