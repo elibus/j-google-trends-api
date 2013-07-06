@@ -4,7 +4,7 @@
 
   <groupId>org.freaknet.gtrends</groupId>
   <artifactId>j-google-trends-api</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
   <name>j-google-trends-api</name>
@@ -35,6 +35,7 @@
     <connection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</connection>
     <url>https://github.com/elibus/j-google-trends-api.git</url>
     <developerConnection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</developerConnection>
+    <tag>j-google-trends-api-1.0</tag>
   </scm>
 
   <build>
