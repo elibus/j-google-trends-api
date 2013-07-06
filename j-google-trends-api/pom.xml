@@ -4,7 +4,7 @@
 
   <groupId>org.freaknet.gtrends</groupId>
   <artifactId>j-google-trends-api</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>j-google-trends-api</name>
@@ -167,6 +167,13 @@
   <properties>
     <project.http.version>1.15.0-rc</project.http.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <github.maven.repository>${basedir}/../releases</github.maven.repository>
   </properties>
 
+  <distributionManagement>
+    <repository>
+      <id>maven-repository</id>
+      <url>${github.maven.repository}</url>
+    </repository>
+  </distributionManagement>
 </project>
