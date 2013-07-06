@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Marco Tizzoni <marco.tizzoni@gmail.com>
+ * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
  * This file is part of j-google-trends-api
  *
@@ -33,20 +33,29 @@ public class GoogleUtils {
     private static final String HEADER_DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
     private static final String HEADER_DEFAULT_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21";
     private static final String HEADER_DEFAULT_ACCEPT = "text/plain";
-    private static final String HEADER_DEFAULT_PERSISTENT_COOKIE = "yes";
 
+    /**
+     * Setup the
+     * <code>HttpRequestBase</code> r with default headers and HTTP parameters.
+     * @param r <code>HttpRequestBase</code> to setup
+     */
     public static void setupHttpRequestDefaults(HttpRequestBase r) {
         r.addHeader("Content-type", HEADER_DEFAULT_CONTENT_TYPE);
         r.addHeader("User-Agent", HEADER_DEFAULT_USER_AGENT);
         r.addHeader("Accept", HEADER_DEFAULT_ACCEPT);
     }
 
-    public static String toString(InputStream inputStream) throws IOException {
+    /**
+     * Eat the <code>InputStream</code> in and return a string.
+     * @param in <code>InputStream</code> to read from
+     * @return a <code>String</code> representation of the stream
+     */
+    public static String toString(InputStream in) throws IOException {
         String string;
         StringBuilder outputBuilder = new StringBuilder();
-        if (inputStream != null) {
+        if (in != null) {
             BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(inputStream));
+                    new BufferedReader(new InputStreamReader(in));
             while (null != (string = reader.readLine())) {
                 outputBuilder.append(string).append('\n');
             }

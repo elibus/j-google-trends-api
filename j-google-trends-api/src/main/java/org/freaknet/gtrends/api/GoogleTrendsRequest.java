@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Marco Tizzoni <marco.tizzoni@gmail.com>
+ * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
  * This file is part of j-google-trends-api
  *
@@ -61,15 +61,28 @@ public class GoogleTrendsRequest {
     private int content = 1;
     private String query;
 
+    /**
+     * 
+     * @param q 
+     */
     public GoogleTrendsRequest(String q) {
         this.query = q;
     }
 
+    /**
+     * Set q and build the <code>HttpRequestBase</code> with the provided parameters.
+     * @param q
+     * @return the built request
+     */
     public HttpRequestBase build(String q) {
         setQuery(q);
         return build();
     }
 
+    /**
+     * Build the <code>HttpRequestBase</code> with the provided parameters.
+     * @return the built request
+     */
     public HttpRequestBase build() {
         HttpRequestBase request = null;
         try {

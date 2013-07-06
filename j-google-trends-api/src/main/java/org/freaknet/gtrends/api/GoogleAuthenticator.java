@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Marco Tizzoni <marco.tizzoni@gmail.com>
+ * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
  * This file is part of j-google-trends-api
  *
@@ -43,7 +43,7 @@ import org.apache.http.protocol.HttpContext;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
 
 /**
- *
+ * Provides a simple way to authenticate with username/password to Google.
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleAuthenticator {
@@ -63,18 +63,23 @@ public class GoogleAuthenticator {
     private DefaultHttpClient client;
     private boolean isLoggedIn = false;
 
-    public GoogleAuthenticator(String username, String passwd) {
-        this.username = username;
-        this.passwd = passwd;
-        this.client = new DefaultHttpClient();
-    }
-
+    /**
+     * Provides authentication for Google services.
+     * @param username Google email in the form <code>user@google.com</code>
+     * @param passwd Google password
+     * @param client <code>DefaultHttpClient</code> to use for the connection
+     */
     public GoogleAuthenticator(String username, String passwd, DefaultHttpClient client) {
         this.username = username;
         this.passwd = passwd;
         this.client = client;
     }
 
+    /**
+     * Starts the authentication process.
+     * @return <code>true</code> if authentication was successful
+     * @throws GoogleAuthenticatorException
+     */
     public boolean authenticate() throws GoogleAuthenticatorException {
         CookieStore cookieStore = new BasicCookieStore();
         HttpContext localContext = new BasicHttpContext();
@@ -84,10 +89,19 @@ public class GoogleAuthenticator {
         return login(galx);
     }
 
+    /**
+     * Checks whether <code>authenticate()</code> was called successfully.
+     * @return <code>true</code> if logged in.
+     */
     public boolean isLoggedIn(){
         return isLoggedIn;
     }
 
+    /**
+     * Parse the login page for the GALX id.
+     * @return GALX id
+     * @throws GoogleAuthenticatorException
+     */
     private String galx() throws GoogleAuthenticatorException {
         String galx = null;
         Pattern pattern = Pattern.compile(RE_GALX, Pattern.CASE_INSENSITIVE);
@@ -97,14 +111,13 @@ public class GoogleAuthenticator {
             HttpResponse response = this.client.execute(get);
             String html = GoogleUtils.toString(response.getEntity().getContent());
             Matcher matcher = pattern.matcher(html);
-            while (matcher.find()) {
+            if (matcher.find()) {
                 galx = matcher.group(1);
             }
 
             if (galx == null) {
                 throw new GoogleAuthenticatorException("Cannot parse GALX!");
             }
-
         } catch (ClientProtocolException ex) {
             throw new GoogleAuthenticatorException(ex);
         } catch (IOException ex) {
@@ -114,6 +127,12 @@ public class GoogleAuthenticator {
         return galx;
     }
 
+    /**
+     * Login in Google.
+     * @param galx The GALX id
+     * @return <code>true</code> if login was successful
+     * @throws GoogleAuthenticatorException
+     */
     private boolean login(String galx) throws GoogleAuthenticatorException {
         isLoggedIn = false;
 

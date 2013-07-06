@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Marco Tizzoni <marco.tizzoni@gmail.com>
+ * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
  * This file is part of j-google-trends-api
  *

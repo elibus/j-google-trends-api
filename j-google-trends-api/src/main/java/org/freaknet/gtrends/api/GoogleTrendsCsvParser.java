@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Marco Tizzoni <marco.tizzoni@gmail.com>
+ * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
  * This file is part of j-google-trends-api
  *
@@ -22,16 +22,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Parse the CSV as provided by the CSV Download functionality in Google Trends.
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleTrendsCsvParser {
-    String csv;
+    private String csv;
 
+    /**
+     * 
+     * @param csv 
+     */
     public GoogleTrendsCsvParser(String csv){
         this.csv = csv;
     }
 
+    /**
+     * 
+     * @param section
+     * @param header If the section has a header. If <code>true</code> the first
+     * line will be skipped.
+     * @return content The content of the section
+     */
     public String getSection(String section, boolean header){
         String ret = null;
 
