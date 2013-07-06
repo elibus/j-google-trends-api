@@ -18,6 +18,10 @@
  */
 package org.freaknet.gtrends.api;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,45 +30,92 @@ import java.util.regex.Pattern;
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleTrendsCsvParser {
-    private String csv;
 
-    /**
-     * 
-     * @param csv 
-     */
-    public GoogleTrendsCsvParser(String csv){
-        this.csv = csv;
+  private String csv;
+
+  /**
+   *
+   * @param csv
+   */
+  public GoogleTrendsCsvParser(String csv) {
+    this.csv = csv;
+  }
+
+  /**
+   *
+   * @param section Section of the CSV to retrieve
+   * @param header If the section has a header. If <code>true</code> the first
+   * line will be skipped.
+   * @return content The content of the section
+   */
+  public String getSectionAsString(String section, boolean header) {
+    String ret = null;
+
+    Pattern startSectionPattern = Pattern.compile("^" + section + ".*$", Pattern.MULTILINE);
+    Matcher matcher = startSectionPattern.matcher(csv);
+    if (matcher.find()) {
+      ret = csv.subSequence(matcher.start(), csv.length()).toString();
+
+      int end = ret.length();
+
+      Pattern endSectionPattern = Pattern.compile("\n\n\n", Pattern.MULTILINE);
+      matcher = endSectionPattern.matcher(ret);
+      if (matcher.find()) {
+        end = matcher.start();
+      }
+
+      ret = ret.subSequence(0, end).toString().substring(ret.indexOf('\n') + 1);
+
+      if (header) {
+        ret = ret.substring(ret.indexOf('\n') + 1);
+      }
     }
 
-    /**
-     * 
-     * @param section
-     * @param header If the section has a header. If <code>true</code> the first
-     * line will be skipped.
-     * @return content The content of the section
-     */
-    public String getSection(String section, boolean header){
-        String ret = null;
+    return ret;
+  }
 
-        Pattern startSectionPattern = Pattern.compile("^" + section + ".*$", Pattern.MULTILINE);
-        Matcher matcher = startSectionPattern.matcher(csv);
-        if (matcher.find()){
-            ret = csv.subSequence(matcher.start(), csv.length()).toString();
+  /**
+   * Retrieve the CSV section as list of <code>String[]</code>.
+   * @param section Section of the CSV to retrieve
+   * @param header If the section has a header. If <code>true</code> the first
+   * line will be skipped.
+   * @param fieldSep Field separator for each line
+   * @return An <code>ArrayList</code> of <code>String[]</code> where each element in
+   * the <code>ArrayList</code> is a row and each <code>String</code> is a column
+   * @throws IOException
+   */
+  public ArrayList<String[]> getSectionAsStringArrayList(String section, boolean header, String fieldSep) throws IOException {
+    ArrayList<String[]> ret = new ArrayList<String[]>();
+    BufferedReader r = new BufferedReader(new StringReader(getSectionAsString(section, header)));
 
-            int end = ret.length();
-
-            Pattern endSectionPattern = Pattern.compile("\n\n\n", Pattern.MULTILINE);
-            matcher = endSectionPattern.matcher(ret);
-            if (matcher.find()){
-                end = matcher.start();
-            }
-
-            ret = ret.subSequence(0, end).toString();
-
-            if (header){
-                ret = ret.substring(ret.indexOf('\n') + 1);
-            }
-        }
-        return ret;
+    String line;
+    while ((line = r.readLine()) != null) {
+      ret.add(line.split(fieldSep));
     }
+
+    return ret;
+  }
+
+  /**
+   * Retrieve the CSV section as list of <code>String</code>.
+   * @param section Section of the CSV to retrieve
+   * @param header If the section has a header. If <code>true</code> the first
+   * line will be skipped.
+   * @param fieldSep Field separator for each line
+   * @return An <code>ArrayList</code> of <code>String</code> where each <code>String</code>
+   * element in the <code>ArrayList</code> is a row
+   * @throws IOException
+   */
+  public ArrayList<String> getSectionAsStringList(String section, boolean header, String fieldSep) throws IOException {
+    ArrayList<String> ret = new ArrayList<String>();
+    BufferedReader r = new BufferedReader(new StringReader(getSectionAsString(section, header)));
+
+
+    String line;
+    while ((line = r.readLine()) != null) {
+      ret.add(line);
+    }
+
+    return ret;
+  }
 }
