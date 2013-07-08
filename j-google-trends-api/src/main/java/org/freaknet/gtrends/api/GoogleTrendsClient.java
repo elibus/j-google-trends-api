@@ -27,6 +27,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
+import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
 
 /**
  * Implements a client for Google Trends https://www.google.com/trends/
@@ -53,7 +54,7 @@ public class GoogleTrendsClient {
      * @return content The content of the response
      * @throws GoogleTrendsClientException
      */
-    public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException {
+    public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException, GoogleTrendsRequestException {
         String ret = null;
         try {
             if (!authenticator.isLoggedIn()) {

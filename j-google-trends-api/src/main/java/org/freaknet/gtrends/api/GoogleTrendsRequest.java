@@ -19,219 +19,123 @@
 package org.freaknet.gtrends.api;
 
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Iterator;
+import java.util.List;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.DataConfiguration;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
 
 /**
  *
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleTrendsRequest {
-    /* Google Trends Service URL */
-    private static final String SERVICE_URL = "http://www.google.com/trends/viz";
-
-    /* Google Trends parameters */
-    private static final String P_LANGUAGE = "hl";
-    private static final String P_QUERY = "q";
-    private static final String P_EXPORT = "export";
-    private static final String P_CMPT = "cmpt";
-    private static final String P_CONTENT = "content";
-    private static final String P_DATE = "date";
-    private static final String P_GEO = "geo";
-    private static final String P_GEOR = "geor";
-    private static final String P_GRAPH = "graph";
-    private static final String P_SORT = "sort";
-    private static final String P_SCALE = "scale";
-    private static final String P_SA = "sa";
-
-    /* Google Trends defaults */
-    private String language = "en-US";
-    private String date = "all";
-    private String geo = "all";
-    private String geor = "all";
-    private String graph = "all_csv";
-    private int sort = 0;
-    private int scale = 0;
-    private String sa = "N";
-    private int export = 1;
-    private String cmpt = "q";
-    private int content = 1;
     private String query;
+    private URIBuilder builder;
 
     /**
-     * 
-     * @param q 
-     */
-    public GoogleTrendsRequest(String q) {
-        this.query = q;
-    }
-
-    /**
-     * Set q and build the <code>HttpRequestBase</code> with the provided parameters.
+     *
      * @param q
-     * @return the built request
      */
-    public HttpRequestBase build(String q) {
-        setQuery(q);
-        return build();
+    public GoogleTrendsRequest(String q) throws ConfigurationException, URISyntaxException {
+        this.query = q;
+        DataConfiguration config = GoogleConfigurator.getConfiguration();
+        String[] params = config.getStringArray("google.trends.params");
+        this.builder = new URIBuilder(config.getString("google.trends.url"));
+        builder.setParameter("q", this.query);
+        
+        // Set defaults
+        for (int i = 0; i < params.length; i++) {
+            builder.setParameter(params[i], config.getString("google.trends.param." + params[i]));
+        }
     }
 
     /**
-     * Build the <code>HttpRequestBase</code> with the provided parameters.
+     * Build the
+     * <code>HttpRequestBase</code> with the provided parameters.
+     *
      * @return the built request
      */
-    public HttpRequestBase build() {
+    public HttpRequestBase build() throws GoogleTrendsRequestException {
+        return build(new BasicNameValuePair[0]);
+    }
+
+    /**
+     * Build the
+     * <code>HttpRequestBase</code> with the provided parameters.
+     *
+     * @param params Parameters request to set
+     * @return the built request
+     */
+    public HttpRequestBase build(BasicNameValuePair[] params) throws GoogleTrendsRequestException {
         HttpRequestBase request = null;
         try {
-            URIBuilder b = new URIBuilder(SERVICE_URL);
-            b.setParameter(P_LANGUAGE, getLanguage())
-                    .setParameter(P_QUERY, getQuery())
-                    .setParameter(P_EXPORT, String.valueOf(export))
-                    .setParameter(P_CMPT, cmpt)
-                    .setParameter(P_CONTENT, String.valueOf(content))
-                    .setParameter(P_DATE, getDate())
-                    .setParameter(P_GEO, getGeo())
-                    .setParameter(P_GEOR, getGeor())
-                    .setParameter(P_GRAPH, getGraph())
-                    .setParameter(P_SORT, String.valueOf(getSort()))
-                    .setParameter(P_SCALE, String.valueOf(getScale()))
-                    .setParameter(P_SA, getSa());
-
-            request = new HttpGet(b.build());
+            for (int i = 0; i < params.length; i++) {
+                BasicNameValuePair p = params[i];
+                builder.setParameter(p.getName(), p.getValue());
+            }
+            request = new HttpGet(builder.build());
             GoogleUtils.setupHttpRequestDefaults(request);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(GoogleTrendsRequest.class.getName()).log(Level.SEVERE, null, ex);
+            throw new GoogleTrendsRequestException(ex);
+        } catch (ConfigurationException ex) {
+            throw new GoogleTrendsRequestException(ex);
         }
 
         return request;
     }
 
     /**
-     * @return the language
+     * Set a parameter value.
+     *
+     * @param name
+     * @param value
      */
-    public String getLanguage() {
-        return language;
+    public void setParam(String name, String value) {
+        builder.setParameter(name, value);
     }
 
     /**
-     * @param language the language to set
+     * Get a parameter value.
+     *
+     * @param name
+     * @return value
      */
-    public void setLanguage(String language) {
-        this.language = language;
+    public String getParam(String name) {
+        String value = null;
+        Iterator<NameValuePair> i = builder.getQueryParams().iterator();
+        while (i.hasNext()) {
+            NameValuePair nameValuePair = i.next();
+            if (nameValuePair.getName().equals(name)) {
+                value = nameValuePair.getValue();
+                break;
+            }
+        }
+        return value;
     }
 
     /**
-     * @return the date
+     * Get the request parameters.
+     * @return the request parameters
      */
-    public String getDate() {
-        return date;
+    public List<NameValuePair> getQueryParams() {
+        return builder.getQueryParams();
     }
-
+    
     /**
-     * @param date the date to set
+     * Set the request parameters.
+     * @param params the request parameters
      */
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    /**
-     * @return the geo
-     */
-    public String getGeo() {
-        return geo;
-    }
-
-    /**
-     * @param geo the geo to set
-     */
-    public void setGeo(String geo) {
-        this.geo = geo;
-    }
-
-    /**
-     * @return the geor
-     */
-    public String getGeor() {
-        return geor;
-    }
-
-    /**
-     * @param geor the geor to set
-     */
-    public void setGeor(String geor) {
-        this.geor = geor;
-    }
-
-    /**
-     * @return the graph
-     */
-    public String getGraph() {
-        return graph;
-    }
-
-    /**
-     * @param graph the graph to set
-     */
-    public void setGraph(String graph) {
-        this.graph = graph;
-    }
-
-    /**
-     * @return the sort
-     */
-    public int getSort() {
-        return sort;
-    }
-
-    /**
-     * @param sort the sort to set
-     */
-    public void setSort(int sort) {
-        this.sort = sort;
-    }
-
-    /**
-     * @return the scale
-     */
-    public int getScale() {
-        return scale;
-    }
-
-    /**
-     * @param scale the scale to set
-     */
-    public void setScale(int scale) {
-        this.scale = scale;
-    }
-
-    /**
-     * @return the sa
-     */
-    public String getSa() {
-        return sa;
-    }
-
-    /**
-     * @param sa the sa to set
-     */
-    public void setSa(String sa) {
-        this.sa = sa;
-    }
-
-    /**
-     * @return the query
-     */
-    public String getQuery() {
-        return query;
-    }
-
-    /**
-     * @param query the query to set
-     */
-    public void setQuery(String query) {
-        this.query = query;
+    public void setQueryParams(List<NameValuePair> params) {
+        Iterator<NameValuePair> i = params.iterator();
+        while (i.hasNext()) {
+            NameValuePair p = i.next();
+            builder.setParameter(p.getName(), p.getValue());
+        }
     }
 }

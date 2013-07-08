@@ -22,6 +22,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.DataConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**
@@ -29,20 +32,18 @@ import org.apache.http.client.methods.HttpRequestBase;
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleUtils {
-
-  private static final String HEADER_DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
-  private static final String HEADER_DEFAULT_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21";
-  private static final String HEADER_DEFAULT_ACCEPT = "text/plain";
-
+    
   /**
    * Setup the
    * <code>HttpRequestBase</code> r with default headers and HTTP parameters.
    * @param r <code>HttpRequestBase</code> to setup
    */
-  public static void setupHttpRequestDefaults(HttpRequestBase r) {
-    r.addHeader("Content-type", HEADER_DEFAULT_CONTENT_TYPE);
-    r.addHeader("User-Agent", HEADER_DEFAULT_USER_AGENT);
-    r.addHeader("Accept", HEADER_DEFAULT_ACCEPT);
+  public static void setupHttpRequestDefaults(HttpRequestBase r) throws ConfigurationException {
+    DataConfiguration config = GoogleConfigurator.getConfiguration();
+
+    r.addHeader("Content-type", config.getString("request.default.content-type"));
+    r.addHeader("User-Agent", config.getString("request.default.user-agent"));
+    r.addHeader("Accept", config.getString("request.default.accept"));
   }
 
   /**
