@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.configuration.ConfigurationException;
 
 /**
  * Parse the CSV as provided by the CSV Download functionality in Google Trends.
@@ -32,17 +33,19 @@ import java.util.regex.Pattern;
 public class GoogleTrendsCsvParser {
 
   private String csv;
+  private String separator;
 
   /**
    *
    * @param csv
    */
-  public GoogleTrendsCsvParser(String csv) {
+  public GoogleTrendsCsvParser(String csv) throws ConfigurationException {
     this.csv = csv;
+    this.separator = GoogleConfigurator.getConfiguration().getString("google.csv.separator");
   }
 
   /**
-   *
+   * Gets the specified section from the CSV.
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
@@ -75,7 +78,7 @@ public class GoogleTrendsCsvParser {
   }
 
   /**
-   * Retrieve the CSV section as list of <code>String[]</code>.
+   * Gets the specified section from the CSV as list of <code>String[]</code>.
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
@@ -118,4 +121,26 @@ public class GoogleTrendsCsvParser {
 
     return ret;
   }
+
+    /**
+     * @return the separator
+     */
+    public String getSeparator() {
+        return separator;
+    }
+
+    /**
+     * @param separator the separator to set
+     */
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
+    
+    /**
+     * Retrieve the whole CSV document.
+     * @return The CSV file.
+     */
+    public String getCsv(){
+        return this.csv;
+    }
 }
