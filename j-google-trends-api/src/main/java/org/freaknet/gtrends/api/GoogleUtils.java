@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DataConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.http.client.methods.HttpRequestBase;
 
 /**

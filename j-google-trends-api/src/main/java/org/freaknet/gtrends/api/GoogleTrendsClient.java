@@ -19,8 +19,11 @@
 package org.freaknet.gtrends.api;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -30,7 +33,8 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
 
 /**
- * Implements a client for Google Trends https://www.google.com/trends/
+ * Implements a client for Google Trends https://www.google.com/trends/ .
+ *
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleTrendsClient {
@@ -49,8 +53,9 @@ public class GoogleTrendsClient {
     }
 
     /**
-     * Execute the request
-     * @param the request to execute
+     * Execute the request.
+     *
+     * @param request to execute
      * @return content The content of the response
      * @throws GoogleTrendsClientException
      */
@@ -64,17 +69,19 @@ public class GoogleTrendsClient {
             HttpResponse response = client.execute(httpRequest);
             ret = GoogleUtils.toString(response.getEntity().getContent());
 
-            Pattern p = Pattern.compile(".*An error has been detected.*", Pattern.CASE_INSENSITIVE);
+            Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
             Matcher matcher = p.matcher(ret);
             if (matcher.find()) {
                 throw new GoogleTrendsClientException("The response body does not look like a CSV: " + ret);
             }
         } catch (GoogleAuthenticatorException ex) {
-             throw new GoogleTrendsClientException(ex);
+            throw new GoogleTrendsClientException(ex);
         } catch (ClientProtocolException ex) {
             throw new GoogleTrendsClientException(ex);
         } catch (IOException ex) {
             throw new GoogleTrendsClientException(ex);
+        } catch (ConfigurationException ex) {
+            Logger.getLogger(GoogleTrendsClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return ret;

@@ -113,7 +113,6 @@ public class GoogleTrendsCsvParser {
     ArrayList<String> ret = new ArrayList<String>();
     BufferedReader r = new BufferedReader(new StringReader(getSectionAsString(section, header)));
 
-
     String line;
     while ((line = r.readLine()) != null) {
       ret.add(line);

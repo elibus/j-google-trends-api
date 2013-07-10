@@ -28,13 +28,14 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  */
 public class GoogleConfigurator {
     private static DataConfiguration config = null;
+    private static final String CONFIG_FILE = "org/freaknet/gtrends/api/config.properties";
 
     private GoogleConfigurator() {
     }
 
     public static DataConfiguration getConfiguration() throws ConfigurationException {
         if (config == null) {
-            config = new DataConfiguration(new PropertiesConfiguration("config.properties"));
+            config = new DataConfiguration(new PropertiesConfiguration(CONFIG_FILE));
         }
         return config;
     }
