@@ -2,15 +2,18 @@ Java Google Trends API (unofficial)
 ===================================
 j-google-trends-api is a Java based implementation of Unofficial Google Trends API.
 
-Google does not provide API for its Trends services, this an unofficial Java implementation. Features:
-- Easily authenticates to Google services
+Google does not provide any API for its Trends services, this an unofficial Java implementation. Features:
+- Easily authenticates to Google's services
 - Parses CSV file as downloaded from Trends
-- Easily queries Trends services by only configuring request parameters
+- Simply queries Trends by only configuring the request parameters
 - Supports Proxy configuration
 
 Download binaries
 =================
+- Jar library: 
 https://github.com/elibus/j-google-trends-api/tree/master/releases/org/freaknet/gtrends/j-google-trends-api
+
+- A ready to use binary client for Google Trends is available here: https://github.com/elibus/j-google-trends-client
 
 Example
 =======
