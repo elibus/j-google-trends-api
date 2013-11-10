@@ -1,0 +1,178 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.freaknet.gtrends</groupId>
+    <artifactId>j-google-trends-api</artifactId>
+    <version>1.5-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>j-google-trends-api</name>
+    <url>http://maven.apache.org</url>
+
+    <inceptionYear>2013</inceptionYear>
+
+    <prerequisites>
+        <maven>2.0.9</maven>
+    </prerequisites>
+
+    <developers>
+        <developer>
+            <id>elibus</id>
+            <name>Marco Tizzoni</name>
+            <email>marco.tizzoni@gmail.com</email>
+            <organization>Freaknet</organization>
+            <organizationUrl>http://www.freaknet.org</organizationUrl>
+            <roles>
+                <role>owner</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</connection>
+        <url>https://github.com/elibus/j-google-trends-api.git</url>
+        <developerConnection>scm:git:ssh://git@github.com/elibus/j-google-trends-api.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>2.4</version>
+            </extension>
+        </extensions>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <configLocation>src/main/config/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <basedir>${basedir}</basedir>
+                    <strictCheck>true</strictCheck>
+                    <header>${basedir}/src/main/config/header.txt</header>
+                    <quiet>false</quiet>
+                    <failIfMissing>true</failIfMissing>
+                    <aggregate>false</aggregate>
+                    <includes>
+                        <include>src/**</include>
+                        <include>**/test/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>target/**</exclude>
+                        <exclude>.clover/**</exclude>
+                    </excludes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                    <mapping>
+                        <jwc>XML_STYLE</jwc>
+                        <application>XML_STYLE</application>
+                        <myFileExtension>JAVADOC_STYLE</myFileExtension>
+                    </mapping>
+                    <useDefaultMapping>true</useDefaultMapping>
+                    <properties>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <year>${project.inceptionYear}</year>
+                        <email>marco.tizzoni@gmail.com</email>
+                        <author>Marco Tizzoni</author>
+                    </properties>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.1</version>
+            </plugin>
+        </plugins>
+
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.9</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <project.http.version>1.15.0-rc</project.http.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-repository</id>
+            <url>file://${project.basedir}/../releases</url>
+        </repository>
+    </distributionManagement>
+</project>
