@@ -160,22 +160,7 @@ public class GoogleAuthenticator {
             GoogleUtils.setupHttpRequestDefaults(httpGet);
             HttpResponse httpResponse = client.execute(httpGet);
             HttpEntity entity = httpResponse.getEntity();
-            
-//            StatusLine statusLine = httpResponse.getStatusLine();
-//            HeaderIterator headerIterator = httpResponse.headerIterator();
-            
-//            System.out.println("***** STATUS LINE");
-//            System.out.println(statusLine);
-//            System.out.println("***** HEADER");
-//            
-//            while (headerIterator.hasNext()) {
-//                Header next = (Header) headerIterator.next();
-//                System.out.println(next.getName() + next.getValue());
-//            }
-            
             String content = GoogleUtils.toString(entity.getContent());
-//            System.out.println("***** CONTENT");
-//            System.out.println(content);
 
             Pattern p = Pattern.compile(config.getString("google.auth.reIsLoggedIn"));
             Matcher m = p.matcher(content);
