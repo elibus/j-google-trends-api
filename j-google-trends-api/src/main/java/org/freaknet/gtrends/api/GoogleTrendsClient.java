@@ -55,24 +55,24 @@ public class GoogleTrendsClient {
     /**
      * Execute the request.
      *
-     * @param request to execute
+     * @param response html response
      * @return content The content of the response
      * @throws GoogleTrendsClientException
      */
     public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException, GoogleTrendsRequestException {
-        String ret = null;
+        String html = null;
         try {
             if (!authenticator.isLoggedIn()) {
                 authenticator.authenticate();
             }
             HttpRequestBase httpRequest = request.build();
             HttpResponse response = client.execute(httpRequest);
-            ret = GoogleUtils.toString(response.getEntity().getContent());
+            html = GoogleUtils.toString(response.getEntity().getContent());
 
             Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
-            Matcher matcher = p.matcher(ret);
+            Matcher matcher = p.matcher(html);
             if (matcher.find()) {
-                throw new GoogleTrendsClientException("The response body does not look like a CSV: " + ret);
+                throw new GoogleTrendsClientException("The response body does not look like a CSV: " + html);
             }
         } catch (GoogleAuthenticatorException ex) {
             throw new GoogleTrendsClientException(ex);
@@ -84,6 +84,6 @@ public class GoogleTrendsClient {
             Logger.getLogger(GoogleTrendsClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return ret;
+        return html;
     }
 }

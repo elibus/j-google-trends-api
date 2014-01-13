@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DataConfiguration;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -42,6 +43,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
 
 /**
@@ -156,7 +158,24 @@ public class GoogleAuthenticator {
 
             HttpGet httpGet = new HttpGet(new URI(config.getString("google.auth.cookieCheckUrl")));
             GoogleUtils.setupHttpRequestDefaults(httpGet);
-            String content = GoogleUtils.toString(client.execute(httpGet).getEntity().getContent());
+            HttpResponse httpResponse = client.execute(httpGet);
+            HttpEntity entity = httpResponse.getEntity();
+            
+//            StatusLine statusLine = httpResponse.getStatusLine();
+//            HeaderIterator headerIterator = httpResponse.headerIterator();
+            
+//            System.out.println("***** STATUS LINE");
+//            System.out.println(statusLine);
+//            System.out.println("***** HEADER");
+//            
+//            while (headerIterator.hasNext()) {
+//                Header next = (Header) headerIterator.next();
+//                System.out.println(next.getName() + next.getValue());
+//            }
+            
+            String content = GoogleUtils.toString(entity.getContent());
+//            System.out.println("***** CONTENT");
+//            System.out.println(content);
 
             Pattern p = Pattern.compile(config.getString("google.auth.reIsLoggedIn"));
             Matcher m = p.matcher(content);
@@ -169,7 +188,7 @@ public class GoogleAuthenticator {
 
             httpGet = new HttpGet(new URI(config.getString("google.auth.googleUrl")));
             GoogleUtils.setupHttpRequestDefaults(httpGet);
-            GoogleUtils.toString(client.execute(httpGet).getEntity().getContent());
+            EntityUtils.consume(client.execute(httpGet).getEntity());
 
         } catch (UnsupportedEncodingException ex) {
             throw new GoogleAuthenticatorException(ex);
