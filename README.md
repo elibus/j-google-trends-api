@@ -55,7 +55,7 @@ Example
             /* The default request downloads a CSV available in content */
             GoogleTrendsCsvParser csvParser = new GoogleTrendsCsvParser(content);
             /* Get a specific section of the CSV */
-            String section = csvParser.getSection("Top searches for", true);
+            String section = csvParser.getSectionAsString("Top searches for", true);
             System.out.println(section);
         }
     }
