@@ -35,23 +35,28 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleTrendsRequest {
-    private String query;
     private URIBuilder builder;
 
     /**
      *
      * @param q
+     * @throws org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException
      */
-    public GoogleTrendsRequest(String q) throws ConfigurationException, URISyntaxException {
-        this.query = q;
-        DataConfiguration config = GoogleConfigurator.getConfiguration();
-        String[] params = config.getStringArray("google.trends.params");
-        this.builder = new URIBuilder(config.getString("google.trends.url"));
-        builder.setParameter("q", this.query);
-        
-        // Set defaults
-        for (int i = 0; i < params.length; i++) {
-            builder.setParameter(params[i], config.getString("google.trends.param." + params[i]));
+    public GoogleTrendsRequest(String q) throws GoogleTrendsRequestException {
+        try {
+            DataConfiguration config = GoogleConfigurator.getConfiguration();
+            String[] params = config.getStringArray("google.trends.params");
+            this.builder = new URIBuilder(config.getString("google.trends.url"));
+            builder.setParameter("q", q);
+            
+            // Set defaults
+            for (int i = 0; i < params.length; i++) {
+                builder.setParameter(params[i], config.getString("google.trends.param." + params[i]));
+            }
+        } catch (ConfigurationException ex) {
+            throw new GoogleTrendsRequestException(ex);
+        } catch (URISyntaxException ex) {
+            throw new GoogleTrendsRequestException(ex);
         }
     }
 
@@ -60,6 +65,7 @@ public class GoogleTrendsRequest {
      * <code>HttpRequestBase</code> with the provided parameters.
      *
      * @return the built request
+     * @throws org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException
      */
     public HttpRequestBase build() throws GoogleTrendsRequestException {
         return build(new BasicNameValuePair[0]);

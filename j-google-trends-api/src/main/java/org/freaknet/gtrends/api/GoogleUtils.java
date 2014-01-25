@@ -31,35 +31,40 @@ import org.apache.http.client.methods.HttpRequestBase;
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleUtils {
-    
-  /**
-   * Setup the
-   * <code>HttpRequestBase</code> r with default headers and HTTP parameters.
-   * @param r <code>HttpRequestBase</code> to setup
-   */
-  public static void setupHttpRequestDefaults(HttpRequestBase r) throws ConfigurationException {
-    DataConfiguration config = GoogleConfigurator.getConfiguration();
 
-    r.addHeader("Content-type", config.getString("request.default.content-type"));
-    r.addHeader("User-Agent", config.getString("request.default.user-agent"));
-    r.addHeader("Accept", config.getString("request.default.accept"));
-  }
-
-  /**
-   * Eat the <code>InputStream</code> in and return a string.
-   * @param in <code>InputStream</code> to read from
-   * @return a <code>String</code> representation of the stream
-   */
-  public static String toString(InputStream in) throws IOException {
-    String string;
-    StringBuilder outputBuilder = new StringBuilder();
-    if (in != null) {
-      BufferedReader reader =
-              new BufferedReader(new InputStreamReader(in));
-      while (null != (string = reader.readLine())) {
-        outputBuilder.append(string).append('\n');
-      }
+    private GoogleUtils() {
     }
-    return outputBuilder.toString();
-  }
+
+    /**
+     * Setup the <code>HttpRequestBase</code> r with default headers and HTTP
+     * parameters.
+     *
+     * @param r <code>HttpRequestBase</code> to setup
+     */
+    public static void setupHttpRequestDefaults(HttpRequestBase r) throws ConfigurationException {
+        DataConfiguration config = GoogleConfigurator.getConfiguration();
+
+        r.addHeader("Content-type", config.getString("request.default.content-type"));
+        r.addHeader("User-Agent", config.getString("request.default.user-agent"));
+        r.addHeader("Accept", config.getString("request.default.accept"));
+    }
+
+    /**
+     * Eat the <code>InputStream</code> in and return a string.
+     *
+     * @param in <code>InputStream</code> to read from
+     * @return a <code>String</code> representation of the stream
+     */
+    public static String toString(InputStream in) throws IOException {
+        String string;
+        StringBuilder outputBuilder = new StringBuilder();
+        if (in != null) {
+            BufferedReader reader
+                    = new BufferedReader(new InputStreamReader(in));
+            while (null != (string = reader.readLine())) {
+                outputBuilder.append(string).append('\n');
+            }
+        }
+        return outputBuilder.toString();
+    }
 }

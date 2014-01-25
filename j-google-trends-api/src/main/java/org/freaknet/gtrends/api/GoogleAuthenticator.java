@@ -145,12 +145,7 @@ public class GoogleAuthenticator {
             
             HttpPost httpPost = new HttpPost(config.getString("google.auth.loginUrl"));
             GoogleUtils.setupHttpRequestDefaults(httpPost);
-            List<NameValuePair> formInputs = new ArrayList<NameValuePair>();
-            formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.email"), this.username));
-            formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.passwd"), this.passwd));
-            formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.persistentCookie"), "yes"));
-            formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.galx"), galx));
-            httpPost.setEntity(new UrlEncodedFormEntity(formInputs, HTTP.UTF_8));
+            httpPost.setEntity(new UrlEncodedFormEntity(setupFormInputs(config, galx), HTTP.UTF_8));
             httpPost.addHeader("Referrer", config.getString("google.auth.loginUrl"));
 
             HttpResponse response = client.execute(httpPost);
@@ -190,5 +185,20 @@ public class GoogleAuthenticator {
         }
 
         return isLoggedIn;
+    }
+
+    /**
+     * 
+     * @param config
+     * @param galx
+     * @return 
+     */
+    private List<NameValuePair> setupFormInputs(DataConfiguration config, String galx) {
+        List<NameValuePair> formInputs = new ArrayList<NameValuePair>();
+        formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.email"), this.username));
+        formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.passwd"), this.passwd));
+        formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.persistentCookie"), "yes"));
+        formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.galx"), galx));
+        return formInputs;
     }
 }

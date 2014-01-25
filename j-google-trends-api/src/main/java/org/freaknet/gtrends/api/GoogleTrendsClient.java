@@ -19,14 +19,11 @@
 package org.freaknet.gtrends.api;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
@@ -59,14 +56,13 @@ public class GoogleTrendsClient {
      * @return content The content of the response
      * @throws GoogleTrendsClientException
      */
-    public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException, GoogleTrendsRequestException {
+    public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException {
         String html = null;
         try {
             if (!authenticator.isLoggedIn()) {
                 authenticator.authenticate();
             }
-            HttpRequestBase httpRequest = request.build();
-            HttpResponse response = client.execute(httpRequest);
+            HttpResponse response = client.execute(request.build());
             html = GoogleUtils.toString(response.getEntity().getContent());
 
             Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
@@ -81,7 +77,9 @@ public class GoogleTrendsClient {
         } catch (IOException ex) {
             throw new GoogleTrendsClientException(ex);
         } catch (ConfigurationException ex) {
-            Logger.getLogger(GoogleTrendsClient.class.getName()).log(Level.SEVERE, null, ex);
+            throw new GoogleTrendsClientException(ex);
+        } catch (GoogleTrendsRequestException ex) {
+            throw new GoogleTrendsClientException(ex);
         }
 
         return html;

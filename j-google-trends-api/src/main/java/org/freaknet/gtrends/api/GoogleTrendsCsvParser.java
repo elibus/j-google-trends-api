@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
@@ -87,8 +88,8 @@ public class GoogleTrendsCsvParser {
    * the <code>ArrayList</code> is a row and each <code>String</code> is a column
    * @throws IOException
    */
-  public ArrayList<String[]> getSectionAsStringArrayList(String section, boolean header, String fieldSep) throws IOException {
-    ArrayList<String[]> ret = new ArrayList<String[]>();
+  public List<String[]> getSectionAsStringArrayList(String section, boolean header, String fieldSep) throws IOException {
+    List<String[]> ret = new ArrayList<String[]>();
     BufferedReader r = new BufferedReader(new StringReader(getSectionAsString(section, header)));
 
     String line;
@@ -109,8 +110,8 @@ public class GoogleTrendsCsvParser {
    * element in the <code>ArrayList</code> is a row
    * @throws IOException
    */
-  public ArrayList<String> getSectionAsStringList(String section, boolean header, String fieldSep) throws IOException {
-    ArrayList<String> ret = new ArrayList<String>();
+  public List<String> getSectionAsStringList(String section, boolean header, String fieldSep) throws IOException {
+    List<String> ret = new ArrayList<String>();
     BufferedReader r = new BufferedReader(new StringReader(getSectionAsString(section, header)));
 
     String line;
