@@ -163,7 +163,8 @@ public class GoogleAuthenticator {
             if (m.find()) {
                 isLoggedIn = true;
             } else {
-                throw new GoogleAuthenticatorException("Failed to login!");
+                throw new GoogleAuthenticatorException("Failed to login! Could not match: " +
+                        config.getString("google.auth.reIsLoggedIn") + "page\n" + content);
             }
 
             httpGet = new HttpGet(new URI(config.getString("google.auth.googleUrl")));
