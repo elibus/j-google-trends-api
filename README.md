@@ -8,12 +8,14 @@ Google does not provide any API for its Trends services, this an unofficial Java
 - Simply queries Trends by only configuring the request parameters
 - Supports Proxy configuration
 
+**A ready to use binary client for Google Trends is available here!** https://github.com/elibus/j-google-trends-client/tree/master/releases/org/freaknet/gtrends/client/j-google-trends-client
+
+
 Download binaries
 =================
 - Jar library: 
 https://github.com/elibus/j-google-trends-api/tree/master/releases/org/freaknet/gtrends/j-google-trends-api
 
-- A ready to use binary client for Google Trends is available here: https://github.com/elibus/j-google-trends-client/tree/master/releases/org/freaknet/gtrends/client/j-google-trends-client
 
 Example
 =======
