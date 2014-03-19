@@ -1,3 +1,5 @@
+package org.freaknet.gtrends.api;
+
 /**
  * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
@@ -16,7 +18,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with j-google-trends-api.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.freaknet.gtrends.api;
+
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DataConfiguration;

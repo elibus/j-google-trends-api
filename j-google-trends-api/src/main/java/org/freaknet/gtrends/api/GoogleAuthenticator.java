@@ -1,3 +1,5 @@
+package org.freaknet.gtrends.api;
+
 /**
  * Copyright (C) 2013 Marco Tizzoni <marco.tizzoni@gmail.com>
  *
@@ -16,7 +18,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with j-google-trends-api.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.freaknet.gtrends.api;
+
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,15 +38,13 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
+
 
 /**
  * Provides a simple way to authenticate with username/password to Google.
@@ -78,9 +78,6 @@ public class GoogleAuthenticator {
      */
     public boolean authenticate() throws GoogleAuthenticatorException {
         CookieStore cookieStore = new BasicCookieStore();
-        HttpContext localContext = new BasicHttpContext();
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-
         String galx = galx();
         return login(galx);
     }

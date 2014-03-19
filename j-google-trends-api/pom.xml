@@ -3,7 +3,7 @@
 
     <groupId>org.freaknet.gtrends</groupId>
     <artifactId>j-google-trends-api</artifactId>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <packaging>jar</packaging>
 
     <name>j-google-trends-api</name>

@@ -33,12 +33,13 @@ import org.apache.commons.configuration.ConfigurationException;
  */
 public class GoogleTrendsCsvParser {
 
-  private String csv;
+  private final String csv;
   private String separator;
 
   /**
    *
    * @param csv
+   * @throws org.apache.commons.configuration.ConfigurationException
    */
   public GoogleTrendsCsvParser(String csv) throws ConfigurationException {
     this.csv = csv;

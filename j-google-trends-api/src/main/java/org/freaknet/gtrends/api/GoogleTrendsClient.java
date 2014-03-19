@@ -36,8 +36,8 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
  */
 public class GoogleTrendsClient {
 
-    private GoogleAuthenticator authenticator;
-    private DefaultHttpClient client;
+    private final GoogleAuthenticator authenticator;
+    private final DefaultHttpClient client;
 
     /**
      *
@@ -52,7 +52,7 @@ public class GoogleTrendsClient {
     /**
      * Execute the request.
      *
-     * @param response html response
+     * @param request
      * @return content The content of the response
      * @throws GoogleTrendsClientException
      */
@@ -62,13 +62,14 @@ public class GoogleTrendsClient {
             if (!authenticator.isLoggedIn()) {
                 authenticator.authenticate();
             }
+            
             HttpResponse response = client.execute(request.build());
             html = GoogleUtils.toString(response.getEntity().getContent());
 
             Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
             Matcher matcher = p.matcher(html);
             if (matcher.find()) {
-                throw new GoogleTrendsClientException("The response body does not look like a CSV: " + html);
+                throw new GoogleTrendsClientException("*** You are running too fast man! Looks like you reached your quota limit. Wait a while and slow it down with the '-S' option! *** ");
             }
         } catch (GoogleAuthenticatorException ex) {
             throw new GoogleTrendsClientException(ex);
