@@ -29,6 +29,7 @@ import org.apache.commons.configuration.ConfigurationException;
 
 /**
  * Parse the CSV as provided by the CSV Download functionality in Google Trends.
+ *
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleTrendsCsvParser {
@@ -48,6 +49,7 @@ public class GoogleTrendsCsvParser {
 
   /**
    * Gets the specified section from the CSV.
+   *
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
@@ -81,12 +83,14 @@ public class GoogleTrendsCsvParser {
 
   /**
    * Gets the specified section from the CSV as list of <code>String[]</code>.
+   *
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
    * @param fieldSep Field separator for each line
-   * @return An <code>ArrayList</code> of <code>String[]</code> where each element in
-   * the <code>ArrayList</code> is a row and each <code>String</code> is a column
+   * @return An <code>ArrayList</code> of <code>String[]</code> where each
+   * element in the <code>ArrayList</code> is a row and each <code>String</code>
+   * is a column
    * @throws IOException
    */
   public List<String[]> getSectionAsStringArrayList(String section, boolean header, String fieldSep) throws IOException {
@@ -103,12 +107,13 @@ public class GoogleTrendsCsvParser {
 
   /**
    * Retrieve the CSV section as list of <code>String</code>.
+   *
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
    * @param fieldSep Field separator for each line
-   * @return An <code>ArrayList</code> of <code>String</code> where each <code>String</code>
-   * element in the <code>ArrayList</code> is a row
+   * @return An <code>ArrayList</code> of <code>String</code> where each
+   * <code>String</code> element in the <code>ArrayList</code> is a row
    * @throws IOException
    */
   public List<String> getSectionAsStringList(String section, boolean header, String fieldSep) throws IOException {
@@ -123,25 +128,26 @@ public class GoogleTrendsCsvParser {
     return ret;
   }
 
-    /**
-     * @return the separator
-     */
-    public String getSeparator() {
-        return separator;
-    }
+  /**
+   * @return the separator
+   */
+  public String getSeparator() {
+    return separator;
+  }
 
-    /**
-     * @param separator the separator to set
-     */
-    public void setSeparator(String separator) {
-        this.separator = separator;
-    }
-    
-    /**
-     * Retrieve the whole CSV document.
-     * @return The CSV file.
-     */
-    public String getCsv(){
-        return this.csv;
-    }
+  /**
+   * @param separator the separator to set
+   */
+  public void setSeparator(String separator) {
+    this.separator = separator;
+  }
+
+  /**
+   * Retrieve the whole CSV document.
+   *
+   * @return The CSV file.
+   */
+  public String getCsv() {
+    return this.csv;
+  }
 }

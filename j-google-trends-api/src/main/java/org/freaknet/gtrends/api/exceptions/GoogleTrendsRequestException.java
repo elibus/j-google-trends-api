@@ -16,7 +16,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with j-google-trends-api.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.freaknet.gtrends.api.exceptions;
 
 /**
@@ -25,31 +24,30 @@ package org.freaknet.gtrends.api.exceptions;
  */
 public class GoogleTrendsRequestException extends Exception {
 
-    /**
-     * Creates a new instance of
-     * <code>GoogleTrensRequestException</code> without detail message.
-     */
-    public GoogleTrendsRequestException() {
-    }
+  /**
+   * Creates a new instance of <code>GoogleTrensRequestException</code> without
+   * detail message.
+   */
+  public GoogleTrendsRequestException() {
+  }
 
-    /**
-     * Constructs an instance of
-     * <code>GoogleTrensRequestException</code> with the specified detail
-     * message.
-     *
-     * @param msg the detail message.
-     */
-    public GoogleTrendsRequestException(String msg) {
-        super(msg);
-    }
+  /**
+   * Constructs an instance of <code>GoogleTrensRequestException</code> with the
+   * specified detail message.
+   *
+   * @param msg the detail message.
+   */
+  public GoogleTrendsRequestException(String msg) {
+    super(msg);
+  }
 
-    /**
-     * Constructs an instance of
-     * <code>GoogleTrensRequestException</code> with the specified exception.
-     *
-     * @param e the detail message.
-     */
-    public GoogleTrendsRequestException(Exception e) {
-        super(e);
-    }
+  /**
+   * Constructs an instance of <code>GoogleTrensRequestException</code> with the
+   * specified exception.
+   *
+   * @param e the detail message.
+   */
+  public GoogleTrendsRequestException(Exception e) {
+    super(e);
+  }
 }

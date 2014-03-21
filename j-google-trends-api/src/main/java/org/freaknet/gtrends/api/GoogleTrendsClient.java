@@ -36,53 +36,55 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
  */
 public class GoogleTrendsClient {
 
-    private final GoogleAuthenticator authenticator;
-    private final DefaultHttpClient client;
+  private final GoogleAuthenticator authenticator;
+  private final DefaultHttpClient client;
 
-    /**
-     *
-     * @param authenticator
-     * @param client
-     */
-    public GoogleTrendsClient(GoogleAuthenticator authenticator, DefaultHttpClient client) {
-        this.authenticator = authenticator;
-        this.client = client;
+  /**
+   *
+   * @param authenticator
+   * @param client
+   */
+  public GoogleTrendsClient(GoogleAuthenticator authenticator, DefaultHttpClient client) {
+    this.authenticator = authenticator;
+    this.client = client;
+  }
+
+  /**
+   * Execute the request.
+   *
+   * @param request
+   * @return content The content of the response
+   * @throws GoogleTrendsClientException
+   */
+  public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException {
+    String html = null;
+    try {
+      if (!authenticator.isLoggedIn()) {
+        authenticator.authenticate();
+      }
+
+      System.out.println(request.build().toString());
+
+      HttpResponse response = client.execute(request.build());
+      html = GoogleUtils.toString(response.getEntity().getContent());
+
+      Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
+      Matcher matcher = p.matcher(html);
+      if (matcher.find()) {
+        throw new GoogleTrendsClientException("*** You are running too fast man! Looks like you reached your quota limit. Wait a while and slow it down with the '-S' option! *** ");
+      }
+    } catch (GoogleAuthenticatorException ex) {
+      throw new GoogleTrendsClientException(ex);
+    } catch (ClientProtocolException ex) {
+      throw new GoogleTrendsClientException(ex);
+    } catch (IOException ex) {
+      throw new GoogleTrendsClientException(ex);
+    } catch (ConfigurationException ex) {
+      throw new GoogleTrendsClientException(ex);
+    } catch (GoogleTrendsRequestException ex) {
+      throw new GoogleTrendsClientException(ex);
     }
 
-    /**
-     * Execute the request.
-     *
-     * @param request
-     * @return content The content of the response
-     * @throws GoogleTrendsClientException
-     */
-    public String execute(GoogleTrendsRequest request) throws GoogleTrendsClientException {
-        String html = null;
-        try {
-            if (!authenticator.isLoggedIn()) {
-                authenticator.authenticate();
-            }
-            
-            HttpResponse response = client.execute(request.build());
-            html = GoogleUtils.toString(response.getEntity().getContent());
-
-            Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
-            Matcher matcher = p.matcher(html);
-            if (matcher.find()) {
-                throw new GoogleTrendsClientException("*** You are running too fast man! Looks like you reached your quota limit. Wait a while and slow it down with the '-S' option! *** ");
-            }
-        } catch (GoogleAuthenticatorException ex) {
-            throw new GoogleTrendsClientException(ex);
-        } catch (ClientProtocolException ex) {
-            throw new GoogleTrendsClientException(ex);
-        } catch (IOException ex) {
-            throw new GoogleTrendsClientException(ex);
-        } catch (ConfigurationException ex) {
-            throw new GoogleTrendsClientException(ex);
-        } catch (GoogleTrendsRequestException ex) {
-            throw new GoogleTrendsClientException(ex);
-        }
-
-        return html;
-    }
+    return html;
+  }
 }
