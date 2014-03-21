@@ -19,6 +19,8 @@
 package org.freaknet.gtrends.api;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
@@ -63,7 +65,7 @@ public class GoogleTrendsClient {
         authenticator.authenticate();
       }
 
-      System.out.println(request.build().toString());
+      Logger.getLogger(GoogleTrendsClient.class.getName()).log(Level.INFO, "Query: {0}", request.build().toString());
 
       HttpResponse response = client.execute(request.build());
       html = GoogleUtils.toString(response.getEntity().getContent());
