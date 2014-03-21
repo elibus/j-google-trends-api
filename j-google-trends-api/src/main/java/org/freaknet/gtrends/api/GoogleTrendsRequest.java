@@ -23,12 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DataConfiguration;
-import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
 
@@ -90,7 +88,7 @@ public class GoogleTrendsRequest {
        * out how to make it in a cleaner way, probably URIBuilder should be 
        * replaced with something custom
       */
-      String uriString = builder.build().toString().replaceAll("\\+","%20");
+      String uriString = builder.build().toString(); //.replaceAll("\\+","%20");
       request = new HttpGet(uriString);
       GoogleUtils.setupHttpRequestDefaults(request);
     } catch (URISyntaxException ex) {

@@ -64,8 +64,7 @@ public class GoogleTrendsClient {
       if (!authenticator.isLoggedIn()) {
         authenticator.authenticate();
       }
-
-      Logger.getLogger(GoogleTrendsClient.class.getName()).log(Level.INFO, "Query: {0}", request.build().toString());
+      Logger.getLogger(GoogleConfigurator.getLoggerPrefix()).log(Level.FINE, "Query: {0}", request.build().toString());
 
       HttpResponse response = client.execute(request.build());
       html = GoogleUtils.toString(response.getEntity().getContent());

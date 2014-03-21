@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
@@ -57,25 +59,29 @@ public class GoogleTrendsCsvParser {
    */
   public String getSectionAsString(String section, boolean header) {
     String ret = null;
+    Logger.getLogger(GoogleConfigurator.getLoggerPrefix()).log(Level.FINE, "Parsing CSV for section: {0}", section);
 
     Pattern startSectionPattern = Pattern.compile("^" + section + ".*$", Pattern.MULTILINE);
     Matcher matcher = startSectionPattern.matcher(csv);
+    
     if (matcher.find()) {
       ret = csv.subSequence(matcher.start(), csv.length()).toString();
 
       int end = ret.length();
 
-      Pattern endSectionPattern = Pattern.compile("\n\n\n", Pattern.MULTILINE);
+      Pattern endSectionPattern = Pattern.compile("\n\n", Pattern.MULTILINE);
       matcher = endSectionPattern.matcher(ret);
       if (matcher.find()) {
         end = matcher.start();
       }
-
+      
       ret = ret.subSequence(0, end).toString().substring(ret.indexOf('\n') + 1);
 
       if (header) {
         ret = ret.substring(ret.indexOf('\n') + 1);
       }
+    } else {
+      Logger.getLogger(GoogleConfigurator.getLoggerPrefix()).log(Level.WARNING, "Writing the full CSV file. Section not found: #{0}", section);
     }
 
     return ret;
