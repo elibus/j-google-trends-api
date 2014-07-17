@@ -54,7 +54,7 @@ public class GoogleTrendsRequest {
   // Parameters that can be set from the client
   private String _geo = null;
   private String _date = null;
-  String _hl = null;
+  String _hl = "en-US";
   private String _q = null;
 
   private final String[][] _optsMatrix = {
@@ -174,7 +174,7 @@ public class GoogleTrendsRequest {
   public void setGeo(String geo) {
     _geo = geo;
   }
-
+  
   private void setupDefaultsParameters() {
     for (String[] pair : _optsMatrix) {
       if (pair[1] != null) {
@@ -182,5 +182,4 @@ public class GoogleTrendsRequest {
       }
     }
   }
-
 }
