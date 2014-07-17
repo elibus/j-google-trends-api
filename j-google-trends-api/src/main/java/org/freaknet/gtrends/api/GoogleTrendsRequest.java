@@ -27,7 +27,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
 
 /**
@@ -38,25 +37,42 @@ public class GoogleTrendsRequest {
 
   private URIBuilder builder;
 
+  private static final String OPT_CMPT = "cmpt";
+  private static final String OPT_CONTENT = "content";
+  private static final String OPT_DATE = "date";
+  private static final String OPT_EXPORT = "export";
+  private static final String OPT_GEO = "geo";
+  private static final String OPT_HL = "hl";
+  private static final String OPT_Q = "q";
+
+  // TODO - move in config.properties
+  // Default parameters for download
+  private final String _cmpt = "q";
+  private final String _content = "1";
+  private final String _export = "1";
+
+  // Parameters that can be set from the client
+  private String _geo = null;
+  private String _date = null;
+  String _hl = null;
+  private String _q = null;
+
+  private final String[][] _optsMatrix = {
+    {OPT_CMPT, _cmpt},
+    {OPT_CONTENT, _content},
+    {OPT_DATE, _date},
+    {OPT_EXPORT, _export},
+    {OPT_HL, _hl},
+    {OPT_GEO, _geo},
+    {OPT_Q, _q},};
+
   /**
    *
    * @param q
    * @throws org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException
    */
   public GoogleTrendsRequest(String q) throws GoogleTrendsRequestException {
-    try {
-      DataConfiguration config = GoogleConfigurator.getConfiguration();
-      String[] params = config.getStringArray("google.trends.params");
-      this.builder = new URIBuilder(config.getString("google.trends.url"));
-      builder.setParameter("q", q);
-      for (String param : params) {
-        builder.setParameter(param, config.getString("google.trends.param." + param));
-      }
-    } catch (ConfigurationException ex) {
-      throw new GoogleTrendsRequestException(ex);
-    } catch (URISyntaxException ex) {
-      throw new GoogleTrendsRequestException(ex);
-    }
+    _q = q;
   }
 
   /**
@@ -66,28 +82,19 @@ public class GoogleTrendsRequest {
    * @throws org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException
    */
   public HttpRequestBase build() throws GoogleTrendsRequestException {
-    return build(new BasicNameValuePair[0]);
-  }
-
-  /**
-   * Build the <code>HttpRequestBase</code> with the provided parameters.
-   *
-   * @param params Parameters request to set
-   * @return the built request
-   * @throws org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException
-   */
-  public HttpRequestBase build(BasicNameValuePair[] params) throws GoogleTrendsRequestException {
     HttpRequestBase request = null;
     try {
-      for (BasicNameValuePair p : params) {
-        builder.setParameter(p.getName(), p.getValue());
-      }
+      DataConfiguration config = GoogleConfigurator.getConfiguration();
+      builder = new URIBuilder(config.getString("google.trends.url"));
+      builder.setParameter(OPT_Q, _q);
+      setupDefaultsParameters();
+
       /* Google Trends does not support spaces encoded as '+' hence we need to 
        * replace all '+' with '%20'. This implementation can be improved: only
        * '+' in the query parameter should be replaced. However I did not figure
        * out how to make it in a cleaner way, probably URIBuilder should be 
        * replaced with something custom
-      */
+       */
       String uriString = builder.build().toString(); //.replaceAll("\\+","%20");
       request = new HttpGet(uriString);
       GoogleUtils.setupHttpRequestDefaults(request);
@@ -107,6 +114,7 @@ public class GoogleTrendsRequest {
    * @param value
    */
   public void setParam(String name, String value) {
+    if (value == null) return;
     builder.setParameter(name, value);
   }
 
@@ -150,4 +158,29 @@ public class GoogleTrendsRequest {
       builder.setParameter(p.getName(), p.getValue());
     }
   }
+
+  public String getDate() {
+    return _date;
+  }
+
+  public void setDate(String date) {
+    _date = date;
+  }
+
+  public String getGeo() {
+    return _geo;
+  }
+
+  public void setGeo(String geo) {
+    _geo = geo;
+  }
+
+  private void setupDefaultsParameters() {
+    for (String[] pair : _optsMatrix) {
+      if (pair[1] != null) {
+        builder.setParameter(pair[0], pair[1]);
+      }
+    }
+  }
+
 }
