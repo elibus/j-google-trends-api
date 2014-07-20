@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsClientException;
 import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
@@ -39,14 +40,14 @@ import org.freaknet.gtrends.api.exceptions.GoogleTrendsRequestException;
 public class GoogleTrendsClient {
 
   private final GoogleAuthenticator authenticator;
-  private final DefaultHttpClient client;
+  private final HttpClient client;
 
   /**
    *
    * @param authenticator
    * @param client
    */
-  public GoogleTrendsClient(GoogleAuthenticator authenticator, DefaultHttpClient client) {
+  public GoogleTrendsClient(GoogleAuthenticator authenticator, HttpClient client) {
     this.authenticator = authenticator;
     this.client = client;
   }
@@ -66,8 +67,10 @@ public class GoogleTrendsClient {
       }
       Logger.getLogger(GoogleConfigurator.getLoggerPrefix()).log(Level.FINE, "Query: {0}", request.build().toString());
 
-      HttpResponse response = client.execute(request.build());
+      HttpRequestBase httpRequest = request.build();
+      HttpResponse response = client.execute(httpRequest);
       html = GoogleUtils.toString(response.getEntity().getContent());
+      httpRequest.releaseConnection();
 
       Pattern p = Pattern.compile(GoogleConfigurator.getConfiguration().getString("google.trends.client.reError"), Pattern.CASE_INSENSITIVE);
       Matcher matcher = p.matcher(html);

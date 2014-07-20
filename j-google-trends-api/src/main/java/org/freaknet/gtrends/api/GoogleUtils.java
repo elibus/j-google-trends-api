@@ -63,9 +63,13 @@ public class GoogleUtils {
   public static void setupHttpRequestDefaults(HttpRequestBase r) throws ConfigurationException {
     DataConfiguration config = GoogleConfigurator.getConfiguration();
 
-    r.addHeader("Content-type", config.getString("request.default.content-type"));
+    //r.addHeader("Content-type", config.getString("request.default.content-type"));
     r.addHeader("User-Agent", config.getString("request.default.user-agent"));
     r.addHeader("Accept", config.getString("request.default.accept"));
+    r.addHeader("Accept-Language", config.getString("request.default.accept-language"));
+    r.addHeader("Accept-Encoding", config.getString("request.default.accept-encoding"));
+    r.addHeader("Connection", config.getString("request.default.connection"));
+    
   }
 
   /**

@@ -38,52 +38,46 @@ package org.freaknet.gtrends.api;
  */
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DataConfiguration;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.freaknet.gtrends.api.exceptions.GoogleAuthenticatorException;
 
 /**
- * Provides a simple way to authenticate with username/password to Google.
+ * Provides a simple way to authenticate with _username/password to Google.
  *
  * @author Marco Tizzoni <marco.tizzoni@gmail.com>
  */
 public class GoogleAuthenticator {
 
-  private String username = "";
-  private String passwd = "";
-  private final DefaultHttpClient client;
-  private boolean isLoggedIn = false;
+  private String _username = "";
+  private String _passwd = "";
+  private final HttpClient _httpClient;
+  private boolean _isLoggedIn = false;
 
   /**
    * Provides authentication for Google services.
    *
    * @param username Google email in the form <code>user@google.com</code>
    * @param passwd Google password
-   * @param client <code>DefaultHttpClient</code> to use for the connection
+   * @param httpClient <code>DefaultHttpClient</code> to use for the connection
    */
-  public GoogleAuthenticator(String username, String passwd, DefaultHttpClient client) {
-    this.username = username;
-    this.passwd = passwd;
-    this.client = client;
+  public GoogleAuthenticator(String username, String passwd, HttpClient httpClient) {
+    _username = username;
+    _passwd = passwd;
+    _httpClient = httpClient;
   }
 
   /**
@@ -93,7 +87,6 @@ public class GoogleAuthenticator {
    * @throws GoogleAuthenticatorException
    */
   public boolean authenticate() throws GoogleAuthenticatorException {
-    CookieStore cookieStore = new BasicCookieStore();
     String galx = galx();
     return login(galx);
   }
@@ -104,7 +97,7 @@ public class GoogleAuthenticator {
    * @return <code>true</code> if logged in.
    */
   public boolean isLoggedIn() {
-    return isLoggedIn;
+    return _isLoggedIn;
   }
 
   /**
@@ -115,14 +108,16 @@ public class GoogleAuthenticator {
    */
   private String galx() throws GoogleAuthenticatorException {
     String galx = null;
+    HttpGet get;
     try {
       DataConfiguration config = GoogleConfigurator.getConfiguration();
 
       Pattern pattern = Pattern.compile(config.getString("google.auth.reGalx"), Pattern.CASE_INSENSITIVE);
-      HttpGet get = new HttpGet(config.getString("google.auth.loginUrl"));
+      get = new HttpGet(config.getString("google.auth.loginUrl"));
 
-      HttpResponse response = this.client.execute(get);
+      HttpResponse response = _httpClient.execute(get);
       String html = GoogleUtils.toString(response.getEntity().getContent());
+      get.releaseConnection();
       Matcher matcher = pattern.matcher(html);
       if (matcher.find()) {
         galx = matcher.group(1);
@@ -137,7 +132,9 @@ public class GoogleAuthenticator {
       throw new GoogleAuthenticatorException(ex);
     } catch (IOException ex) {
       throw new GoogleAuthenticatorException(ex);
-    }
+    } 
+    
+    //printCookies();
 
     return galx;
   }
@@ -150,54 +147,29 @@ public class GoogleAuthenticator {
    * @throws GoogleAuthenticatorException
    */
   private boolean login(String galx) throws GoogleAuthenticatorException {
-    isLoggedIn = false;
+    _isLoggedIn = false;
 
     try {
       DataConfiguration config = GoogleConfigurator.getConfiguration();
 
-      HttpPost httpPost = new HttpPost(config.getString("google.auth.loginUrl"));
+      HttpPost httpPost = new HttpPost(config.getString("google.auth.loginAuthenticate"));
       GoogleUtils.setupHttpRequestDefaults(httpPost);
       httpPost.setEntity(new UrlEncodedFormEntity(setupFormInputs(config, galx), HTTP.UTF_8));
-      httpPost.addHeader("Referrer", config.getString("google.auth.loginUrl"));
-
-      HttpResponse response = client.execute(httpPost);
+      HttpResponse response = _httpClient.execute(httpPost);
       GoogleUtils.toString(response.getEntity().getContent());
-
-      HttpGet httpGet = new HttpGet(new URI(config.getString("google.auth.cookieCheckUrl")));
-      GoogleUtils.setupHttpRequestDefaults(httpGet);
-      HttpResponse httpResponse = client.execute(httpGet);
-      HttpEntity entity = httpResponse.getEntity();
-      String content = GoogleUtils.toString(entity.getContent());
-
-      Pattern p = Pattern.compile(config.getString("google.auth.reIsLoggedIn"));
-      Matcher m = p.matcher(content);
-
-      if (m.find()) {
-        isLoggedIn = true;
-      } else {
-        throw new GoogleAuthenticatorException("Failed to login! Could not match: "
-                + config.getString("google.auth.reIsLoggedIn") + "page\n" + content);
-      }
-
-      httpGet = new HttpGet(new URI(config.getString("google.auth.googleUrl")));
-      GoogleUtils.setupHttpRequestDefaults(httpGet);
-      EntityUtils.consume(client.execute(httpGet).getEntity());
-
+      httpPost.releaseConnection();
     } catch (UnsupportedEncodingException ex) {
       throw new GoogleAuthenticatorException(ex);
     } catch (ClientProtocolException ex) {
       throw new GoogleAuthenticatorException(ex);
     } catch (IOException ex) {
       throw new GoogleAuthenticatorException(ex);
-    } catch (URISyntaxException ex) {
-      throw new GoogleAuthenticatorException(ex);
-    } catch (GoogleAuthenticatorException ex) {
-      throw new GoogleAuthenticatorException(ex);
     } catch (ConfigurationException ex) {
       throw new GoogleAuthenticatorException(ex);
     }
-
-    return isLoggedIn;
+    
+    _isLoggedIn = true;
+    return _isLoggedIn;
   }
 
   /**
@@ -208,10 +180,11 @@ public class GoogleAuthenticator {
    */
   private List<NameValuePair> setupFormInputs(DataConfiguration config, String galx) {
     List<NameValuePair> formInputs = new ArrayList<NameValuePair>();
-    formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.email"), this.username));
-    formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.passwd"), this.passwd));
-    formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.persistentCookie"), "yes"));
+    formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.email"), _username));
+    formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.passwd"), _passwd));
+
     formInputs.add(new BasicNameValuePair(config.getString("google.auth.input.galx"), galx));
+    
     return formInputs;
   }
 }

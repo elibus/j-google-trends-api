@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,8 +37,9 @@ import org.apache.commons.configuration.ConfigurationException;
  */
 public class GoogleTrendsCsvParser {
 
-  private final String csv;
-  private String separator;
+  private static final String SECTION_TOP_SEARCHES_FOR = "Top searches for";
+  private final String _csv;
+  private String _separator;
 
   /**
    *
@@ -45,8 +47,8 @@ public class GoogleTrendsCsvParser {
    * @throws org.apache.commons.configuration.ConfigurationException
    */
   public GoogleTrendsCsvParser(String csv) throws ConfigurationException {
-    this.csv = csv;
-    this.separator = GoogleConfigurator.getConfiguration().getString("google.csv.separator");
+    this._csv = csv;
+    this._separator = GoogleConfigurator.getConfiguration().getString("google.csv.separator");
   }
 
   /**
@@ -62,10 +64,10 @@ public class GoogleTrendsCsvParser {
     Logger.getLogger(GoogleConfigurator.getLoggerPrefix()).log(Level.FINE, "Parsing CSV for section: {0}", section);
 
     Pattern startSectionPattern = Pattern.compile("^" + section + ".*$", Pattern.MULTILINE);
-    Matcher matcher = startSectionPattern.matcher(csv);
-    
+    Matcher matcher = startSectionPattern.matcher(_csv);
+
     if (matcher.find()) {
-      ret = csv.subSequence(matcher.start(), csv.length()).toString();
+      ret = _csv.subSequence(matcher.start(), _csv.length()).toString();
 
       int end = ret.length();
 
@@ -74,7 +76,7 @@ public class GoogleTrendsCsvParser {
       if (matcher.find()) {
         end = matcher.start();
       }
-      
+
       ret = ret.subSequence(0, end).toString().substring(ret.indexOf('\n') + 1);
 
       if (header) {
@@ -82,6 +84,7 @@ public class GoogleTrendsCsvParser {
       }
     } else {
       Logger.getLogger(GoogleConfigurator.getLoggerPrefix()).log(Level.WARNING, "Writing the full CSV file. Section not found: #{0}", section);
+      return "";
     }
 
     return ret;
@@ -93,7 +96,7 @@ public class GoogleTrendsCsvParser {
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
-   * @param fieldSep Field separator for each line
+   * @param fieldSep Field _separator for each line
    * @return An <code>ArrayList</code> of <code>String[]</code> where each
    * element in the <code>ArrayList</code> is a row and each <code>String</code>
    * is a column
@@ -117,7 +120,7 @@ public class GoogleTrendsCsvParser {
    * @param section Section of the CSV to retrieve
    * @param header If the section has a header. If <code>true</code> the first
    * line will be skipped.
-   * @param fieldSep Field separator for each line
+   * @param fieldSep Field _separator for each line
    * @return An <code>ArrayList</code> of <code>String</code> where each
    * <code>String</code> element in the <code>ArrayList</code> is a row
    * @throws IOException
@@ -135,17 +138,17 @@ public class GoogleTrendsCsvParser {
   }
 
   /**
-   * @return the separator
+   * @return the _separator
    */
   public String getSeparator() {
-    return separator;
+    return _separator;
   }
 
   /**
-   * @param separator the separator to set
+   * @param separator the _separator to set
    */
   public void setSeparator(String separator) {
-    this.separator = separator;
+    this._separator = separator;
   }
 
   /**
@@ -154,6 +157,24 @@ public class GoogleTrendsCsvParser {
    * @return The CSV file.
    */
   public String getCsv() {
-    return this.csv;
+    return this._csv;
+  }
+
+  public LinkedList<String> getTopSearches(int max) {
+    LinkedList<String> res = new LinkedList<String>();
+    List<String> topSearches;
+    try {
+      topSearches = getSectionAsStringList(SECTION_TOP_SEARCHES_FOR, false, _separator);
+    } catch (IOException ex) {
+      Logger.getLogger(GoogleTrendsCsvParser.class.getName()).log(Level.WARNING, "Cannot find Top Search section", ex);
+      return res;
+    }
+    for (String col : topSearches) {
+      res.add(col.split(_separator)[0]);
+      if (res.size() >= max){
+        return res;
+      }
+    }
+    return res;
   }
 }

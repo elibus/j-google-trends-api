@@ -60,11 +60,8 @@ public class GoogleTrendsRequest {
   private final String[][] _optsMatrix = {
     {OPT_CMPT, _cmpt},
     {OPT_CONTENT, _content},
-    {OPT_DATE, _date},
     {OPT_EXPORT, _export},
-    {OPT_HL, _hl},
-    {OPT_GEO, _geo},
-    {OPT_Q, _q},};
+    {OPT_HL, _hl}};
 
   /**
    *
@@ -86,8 +83,12 @@ public class GoogleTrendsRequest {
     try {
       DataConfiguration config = GoogleConfigurator.getConfiguration();
       builder = new URIBuilder(config.getString("google.trends.url"));
-      builder.setParameter(OPT_Q, _q);
       setupDefaultsParameters();
+      builder.setParameter(OPT_Q, _q);
+      
+      if (_geo != null){
+        builder.setParameter(OPT_GEO, _geo);
+      }
 
       /* Google Trends does not support spaces encoded as '+' hence we need to 
        * replace all '+' with '%20'. This implementation can be improved: only
@@ -114,7 +115,9 @@ public class GoogleTrendsRequest {
    * @param value
    */
   public void setParam(String name, String value) {
-    if (value == null) return;
+    if (value == null) {
+      return;
+    }
     builder.setParameter(name, value);
   }
 
@@ -159,6 +162,10 @@ public class GoogleTrendsRequest {
     }
   }
 
+  public String getQ(){
+    return _q;
+  }
+  
   public String getDate() {
     return _date;
   }
@@ -174,12 +181,10 @@ public class GoogleTrendsRequest {
   public void setGeo(String geo) {
     _geo = geo;
   }
-  
+
   private void setupDefaultsParameters() {
     for (String[] pair : _optsMatrix) {
-      if (pair[1] != null) {
-        builder.setParameter(pair[0], pair[1]);
-      }
+      builder.setParameter(pair[0], pair[1]);
     }
   }
 }
