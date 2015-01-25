@@ -62,6 +62,10 @@ Example
         }
     }
 
+HOW TO AVOID GOOGLE'S IMPOSED LIMITS
+====================================
+Google has imposed new policies to restrict traffic from bots, these can be circumvented by using a set of anonimous proxies like https://www.hidemyass.com/ . A new proxy has to be setup after 4 requests max. 
+
 CREDITS
 =======
 Based on the original python version available here: https://github.com/suryasev/unofficial-google-trends-api
